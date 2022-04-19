@@ -254,7 +254,7 @@ class FCMService : FirebaseMessagingService() {
       }
 
       key.startsWith(PushConstants.UA_PREFIX) -> {
-        key.substring(PushConstants.UA_PREFIX.length + 1, key.length).lowercase()
+        key.substring(PushConstants.UA_PREFIX.length + 1, key.length).toLowerCase()
       }
 
       key.startsWith(PushConstants.AWS_PINPOINT_PREFIX) -> {
