@@ -67,12 +67,12 @@
 
 - (void)subscribe:(CDVInvokedUrlCommand*)command;
 {
-  NSLog(@"Topic support not implemented")
+    NSLog(@"Topic support not implemented");
 }
 
 - (void)unsubscribe:(CDVInvokedUrlCommand*)command;
 {
-  NSLog(@"Topic support not implemented")
+    NSLog(@"Topic support not implemented");
 }
 
 - (void)init:(CDVInvokedUrlCommand*)command;
