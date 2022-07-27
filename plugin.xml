@@ -121,14 +121,14 @@
 
     <framework src="PushKit.framework"/>
 
-    <podspec>
+    <!-- <podspec>
       <config>
         <source url="https://cdn.cocoapods.org/"/>
       </config>
       <pods use-frameworks="true">
         <pod name="Firebase/Messaging" spec="$IOS_FIREBASE_MESSAGING_VERSION" />
       </pods>
-    </podspec>
+    </podspec> -->
   </platform>
 
   <platform name="windows">
