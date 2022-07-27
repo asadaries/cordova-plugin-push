@@ -543,8 +543,17 @@
                 break;
             }
             case UNAuthorizationStatusDenied:
-            default:
+            {
+                NSError *error = [NSError errorWithDomain:@"PushPlugin" code:1 userInfo:nil];
+                [self failWithMessage:self.callbackId withMsg:@"Authorization Status Denied" withError:error];
                 break;
+            }
+            default:
+            {
+                NSError *error = [NSError errorWithDomain:@"PushPlugin" code:2 userInfo:nil];
+                [self failWithMessage:self.callbackId withMsg:@"Authorization Status unknown" withError:error];
+                break;
+            }
         }
     }];
 }
