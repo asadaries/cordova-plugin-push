@@ -33,6 +33,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.security.SecureRandom
 import java.util.*
+import com.appboy.AppboyFirebaseMessagingService
 
 /**
  * Firebase Cloud Messaging Service Class
@@ -112,8 +113,14 @@ class FCMService : FirebaseMessagingService() {
    * On Message Received
    */
   override fun onMessageReceived(message: RemoteMessage) {
+    super.onMessageReceived(message)
+    
     val from = message.from
     Log.d(TAG, "onMessageReceived (from=$from)")
+    
+    if (AppboyFirebaseMessagingService.handleBrazeRemoteMessage(this, message)) {
+      return
+    }
 
     var extras = Bundle()
 
