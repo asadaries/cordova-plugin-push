@@ -33,7 +33,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.security.SecureRandom
 import java.util.*
-import com.appboy.AppboyFirebaseMessagingService
+import com.braze.push.BrazeFirebaseMessagingService
 
 /**
  * Firebase Cloud Messaging Service Class
@@ -118,7 +118,7 @@ class FCMService : FirebaseMessagingService() {
     val from = message.from
     Log.d(TAG, "onMessageReceived (from=$from)")
     
-    if (AppboyFirebaseMessagingService.handleBrazeRemoteMessage(this, message)) {
+    if (BrazeFirebaseMessagingService.handleBrazeRemoteMessage(this, message)) {
       return
     }
 
