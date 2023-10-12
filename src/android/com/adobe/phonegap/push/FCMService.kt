@@ -119,7 +119,7 @@ class FCMService : FirebaseMessagingService() {
     Log.d(TAG, "onMessageReceived (from=$from)")
     
     if (BrazeFirebaseMessagingService.handleBrazeRemoteMessage(this, message)) {
-      return
+      Log.d(TAG, "Message forwarded to Braze")
     }
 
     var extras = Bundle()
