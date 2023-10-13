@@ -118,7 +118,8 @@ class FCMService : FirebaseMessagingService() {
     val from = message.from
     Log.d(TAG, "onMessageReceived (from=$from)")
     
-    if (BrazeFirebaseMessagingService.handleBrazeRemoteMessage(this, message)) {
+    var handledByBraze = BrazeFirebaseMessagingService.handleBrazeRemoteMessage(this, message)
+    if (handledByBraze) {
       Log.d(TAG, "Message forwarded to Braze")
     }
 
@@ -135,7 +136,7 @@ class FCMService : FirebaseMessagingService() {
     for ((key, value) in message.data) {
       extras.putString(key, value)
     }
-
+    
     if (isAvailableSender(from)) {
       val messageKey = pushSharedPref.getString(PushConstants.MESSAGE_KEY, PushConstants.MESSAGE)
       val titleKey = pushSharedPref.getString(PushConstants.TITLE_KEY, PushConstants.TITLE)
@@ -161,7 +162,7 @@ class FCMService : FirebaseMessagingService() {
         Log.d(TAG, "Force & Is In Foreground")
         extras.putBoolean(PushConstants.COLDSTART, false)
         showNotificationIfPossible(extras)
-      } else {
+      } else if (!handledByBraze) {
         Log.d(TAG, "In Background")
         extras.putBoolean(PushConstants.COLDSTART, isActive)
         showNotificationIfPossible(extras)
