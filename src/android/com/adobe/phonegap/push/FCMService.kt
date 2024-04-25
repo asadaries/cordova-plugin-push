@@ -13,11 +13,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.text.Html
 import android.text.Spanned
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
+import androidx.core.text.HtmlCompat
 import com.adobe.phonegap.push.PushPlugin.Companion.isActive
 import com.adobe.phonegap.push.PushPlugin.Companion.isInForeground
 import com.adobe.phonegap.push.PushPlugin.Companion.sendExtras
@@ -33,6 +33,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.security.SecureRandom
 import java.util.*
+import com.braze.push.BrazeFirebaseMessagingService
 
 /**
  * Firebase Cloud Messaging Service Class
@@ -112,8 +113,15 @@ class FCMService : FirebaseMessagingService() {
    * On Message Received
    */
   override fun onMessageReceived(message: RemoteMessage) {
+    super.onMessageReceived(message)
+    
     val from = message.from
     Log.d(TAG, "onMessageReceived (from=$from)")
+    
+    var handledByBraze = BrazeFirebaseMessagingService.handleBrazeRemoteMessage(this, message)
+    if (handledByBraze) {
+      Log.d(TAG, "Message forwarded to Braze")
+    }
 
     var extras = Bundle()
 
@@ -128,7 +136,7 @@ class FCMService : FirebaseMessagingService() {
     for ((key, value) in message.data) {
       extras.putString(key, value)
     }
-
+    
     if (isAvailableSender(from)) {
       val messageKey = pushSharedPref.getString(PushConstants.MESSAGE_KEY, PushConstants.MESSAGE)
       val titleKey = pushSharedPref.getString(PushConstants.TITLE_KEY, PushConstants.TITLE)
@@ -154,7 +162,7 @@ class FCMService : FirebaseMessagingService() {
         Log.d(TAG, "Force & Is In Foreground")
         extras.putBoolean(PushConstants.COLDSTART, false)
         showNotificationIfPossible(extras)
-      } else {
+      } else if (!handledByBraze) {
         Log.d(TAG, "In Background")
         extras.putBoolean(PushConstants.COLDSTART, isActive)
         showNotificationIfPossible(extras)
@@ -1187,7 +1195,7 @@ class FCMService : FirebaseMessagingService() {
   }
 
   private fun fromHtml(source: String?): Spanned? {
-    return if (source != null) Html.fromHtml(source) else null
+    return if (source != null) HtmlCompat.fromHtml(source, HtmlCompat.FROM_HTML_MODE_LEGACY) else null
   }
 
   private fun isAvailableSender(from: String?): Boolean {

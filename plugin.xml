@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
-  id="@havesource/cordova-plugin-push" version="4.0.0-dev.0">
+  id="@havesource/cordova-plugin-push" version="4.0.0">
 
   <name>Cordova Push Plugin</name>
-  <description>Enable receiving push notifications on Android, iOS and Windows devices. Android uses Firebase Cloud Messaging. iOS uses Apple APNS Notifications. Windows uses Microsoft WNS Notifications.</description>
+  <description>Enable receiving push notifications on Android and iOS devices. Android uses Firebase Cloud Messaging. iOS uses Apple APNS Notifications.</description>
 
   <license>MIT</license>
 
@@ -14,9 +14,11 @@
 
   <engines>
     <engine name="cordova" version=">=10.0.0"/>
-    <engine name="cordova-android" version=">=9.0.0"/>
+    <engine name="cordova-android" version=">=12.0.0"/>
     <engine name="cordova-ios" version=">=6.0.0"/>
   </engines>
+  
+  <dependency id="cordova-outsystems-firebase-core" url="https://github.com/OutSystems/cordova-outsystems-firebase-core.git#2.0.0"/>
 
   <platform name="android">
     <hook type="before_compile" src="hooks/android/beforeCompile.js"/>
@@ -28,10 +30,12 @@
     </config-file>
 
     <config-file target="AndroidManifest.xml" parent="/manifest">
+      <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
       <uses-permission android:name="android.permission.INTERNET"/>
       <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
       <uses-permission android:name="android.permission.WAKE_LOCK"/>
       <uses-permission android:name="android.permission.VIBRATE"/>
+      <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
       <uses-permission android:name="${applicationId}.permission.PushHandlerActivity"/>
       <permission android:name="${applicationId}.permission.PushHandlerActivity" android:protectionLevel="signature"></permission>
     </config-file>
@@ -48,8 +52,8 @@
       <receiver android:name="com.adobe.phonegap.push.BackgroundActionButtonHandler"/>
       <receiver android:name="com.adobe.phonegap.push.PushDismissedHandler"/>
 
-      <service android:name="com.adobe.phonegap.push.FCMService" android:exported="true">
-        <intent-filter>
+      <service android:name="com.adobe.phonegap.push.FCMService" android:exported="false">
+        <intent-filter android:priority="1000">
           <action android:name="com.google.firebase.MESSAGING_EVENT"/>
         </intent-filter>
       </service>
@@ -57,11 +61,11 @@
 
     <config-file target="config.xml" parent="/*">
       <preference name="AndroidXEnabled" value="true" />
-      <preference name="GradlePluginGoogleServicesEnabled" value="true" />
-      <preference name="GradlePluginGoogleServicesVersion" value="4.3.8" />
+      <preference name="GradlePluginGoogleServicesEnabled" value="false" />
+      <preference name="GradlePluginGoogleServicesVersion" value="4.3.15" />
 
       <preference name="GradlePluginKotlinEnabled" value="true" />
-      <preference name="GradlePluginKotlinVersion" value="1.5.20" />
+      <preference name="GradlePluginKotlinVersion" value="1.7.21" />
     </config-file>
 
     <preference name="ANDROIDX_CORE_VERSION" default="1.6.+"/>
@@ -92,7 +96,7 @@
   </platform>
 
   <platform name="ios">
-    <preference name="IOS_FIREBASE_MESSAGING_VERSION" default="~> 8.1.1"/>
+<!--    <preference name="IOS_FIREBASE_MESSAGING_VERSION" default="~> 8.1.1"/> -->
 
     <config-file target="config.xml" parent="/*">
       <feature name="PushNotification">
@@ -121,25 +125,14 @@
 
     <framework src="PushKit.framework"/>
 
-    <podspec>
+    <!-- <podspec>
       <config>
         <source url="https://cdn.cocoapods.org/"/>
       </config>
       <pods use-frameworks="true">
         <pod name="Firebase/Messaging" spec="$IOS_FIREBASE_MESSAGING_VERSION" />
       </pods>
-    </podspec>
+    </podspec> -->
   </platform>
 
-  <platform name="windows">
-    <hook type="after_plugin_install" src="hooks/windows/setToastCapable.js"/>
-
-    <js-module src="src/windows/PushPluginProxy.js" name="PushPlugin">
-      <runs/>
-    </js-module>
-
-    <config-file target="config.xml" parent="/*">
-      <preference name="WindowsToastCapable" value="true"/>
-    </config-file>
-  </platform>
 </plugin>
